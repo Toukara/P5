@@ -2,12 +2,18 @@
 
 const BASE_URL = "http://localhost:3000/api/";
 
+
+/**
+ * 
+ * @param {string} key Le nom du panier 
+ * @returns {item , functions} item retourne le localstorage "panier" , et les functions permettent d'ajouter et de supprimer un produit du panier
+ */
 function store(key) {
   let item = JSON.parse(localStorage.getItem(key)) || {};
 
-  let setItem = (value) => localStorage.setItem(key, JSON.stringify(value));
-  let removeItem = (key) => localStorage.removeItem(key);
-  let clearStorage = () => localStorage.clear();
+  let setItem = (value) => localStorage.setItem(key, JSON.stringify(value)); // function d'ajout de produits au panier.
+  let removeItem = (key) => localStorage.removeItem(key); // function de supprimer d'un produit au panier.
+  let clearStorage = () => localStorage.clear(); //function de clear du panier.
 
   return [item, { setItem, removeItem, clearStorage }];
 }
@@ -23,9 +29,10 @@ async function fetchProducts(id) {
 
 // CODE FOR THE PAGE
 
-var url = new URL(window.location.href);
+var url = new URL(window.location.href); //get l'url du site.
 
-fetchProducts(url.searchParams.get("id")).then(async (data) => {
+fetchProducts(url.searchParams.get("id")).then(async (data) => { 
+  
   let article = {
     image: document.createElement("img"),
     name: document.getElementById("title"),
