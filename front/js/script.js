@@ -1,41 +1,34 @@
-async function fetchArticles() {
-  const resAPI = await fetch("http://localhost:3000/api/products");
-  return await resAPI.json();
-}
+import { fetchProducts } from "./utilities.js";
 
-async function displayArticles() {
-  await fetchArticles()
-    .then((resultAPI) => {
-      const articles = resultAPI;
+fetchProducts()
+  .then(async (data) => {
+    for (const article of data) {
+      let product = {
+        anchor: document.createElement("a"),
+        article: document.createElement("article"),
+        image: document.createElement("img"),
+        name: document.createElement("h3"),
+        description: document.createElement("p"),
+      };
 
-      for (const article of articles) {
-        let productAnchor = document.createElement("a");
-        let productArticle = document.createElement("article");
-        let productImg = document.createElement("img");
-        let productName = document.createElement("h3");
-        let productDescription = document.createElement("p");
+      document.querySelector(".items").appendChild(product.anchor);
+      product.anchor.href = `product.html?id=${article._id}`;
 
-        document.querySelector(".items").appendChild(productAnchor);
-        productAnchor.appendChild(productArticle);
-        productArticle.appendChild(productImg);
-        productArticle.appendChild(productName);
-        productArticle.appendChild(productDescription);
+      product.anchor.appendChild(product.article);
 
-        productAnchor.href = `product.html?id=${article._id}`;
+      product.article.appendChild(product.image);
+      product.image.src = article.imageUrl;
+      product.image.alt = article.altTxt;
 
-        productImg.src = article.imageUrl;
-        productImg.alt = article.altTxt;
+      product.article.appendChild(product.name);
+      product.name.className = "product.name";
+      product.name.textContent = article.name;
 
-        productName.className = "productName";
-        productName.textContent = article.name;
-
-        productDescription.className = "productName";
-        productDescription.textContent = article.description;
-      }
-    })
-    .catch(function (error) {
-      return error;
-    });
-}
-
-displayArticles();
+      product.article.appendChild(product.description);
+      product.description.className = "product.name";
+      product.description.textContent = article.description;
+    }
+  })
+  .catch(function (error) {
+    return error;
+  });

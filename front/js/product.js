@@ -1,4 +1,4 @@
-import { fetchProducts } from "./utilities.js";
+import { fetchProducts, store } from "./utilities.js";
 
 var url = new URL(window.location.href); //get l'url du site.
 
@@ -55,54 +55,3 @@ fetchProducts(url.searchParams.get("id")).then(async (data) => {
     console.log(cart);
   });
 });
-
-// function addToCart() {
-//   return (article) => {
-//     let cart = JSON.parse(localStorage.getItem("panier")) || {};
-
-//     const product = {
-//       color: document.getElementById("colors").value,
-//       quantity: parseInt(document.getElementById("quantity").value),
-//     };
-
-//     if (!product.quantity || !product.color) {
-//       return alert("Veuillez vérifier la quantité et/ou la couleur sélectionnée");
-//     }
-
-//     try {
-//       let colorIndex = cart[article._id].findIndex((e) => e.color === product.color);
-
-//       if (colorIndex) {
-//         cart[article._id][colorIndex].quantity += product.quantity;
-//       } else {
-//         cart[article._id].push({ color: product.color, quantity: product.quantity });
-//       }
-//     } catch {
-//       if (cart[article._id]) {
-//         cart[article._id].push({ color: product.color, quantity: product.quantity });
-//       } else {
-//         cart[article._id] = [{ color: product.color, quantity: product.quantity }];
-//       }
-//     } finally {
-//       localStorage.setItem("panier", JSON.stringify(cart));
-//       console.log("panier updated");
-//     }
-//   };
-// }
-
-// function getArticle() {
-//   fetch(`http://localhost:3000/api/products/${idProduct}`)
-//     .then((res) => {
-//       return res.json();
-//     })
-
-//     .then(async function (resultatAPI) {
-//       article = await resultatAPI;
-//       if (article) {
-//         displayProduct(article);
-//         addToCartBtn.addEventListener("click", addToCart(article));
-//       }
-//     });
-// }
-
-// getArticle();
