@@ -1,25 +1,54 @@
 import { fetchProducts, getCart, store } from "./utilities.js";
 
-let cart = getCart();
-
-// console.table(cart);
-
+let [cart, { setItem }] = store("panier");
 let totalQuantity = 0;
 let totalPrice = 0;
 
 let totalQuantityHTML = document.getElementById("totalQuantity");
 let totalPriceHTML = document.getElementById("totalPrice");
+let cartItems = document.getElementById("cart__items");
 
-if (cart) {
+console.log();
+
+function editItem(defaultQty) {}
+
+async function deleteItem(id, color, quantity, price) {
+  let productArticle = document.querySelector(`[data-id="${id}"]` && `[data-color="${color}"]`);
+  while (productArticle.firstChild) {
+    productArticle.removeChild(productArticle.lastChild);
+  }
+  productArticle.remove();
+
+  if (cart[id].length >= 2) {
+    let productIndex = cart[id].findIndex((x) => x.color === color);
+    cart[id].splice(productIndex, 1);
+    console.log("Couleur retiré");
+  } else {
+    delete cart[id];
+    console.log("Produit retiré");
+  }
+  await getTotalQuantity(totalQuantity - quantity);
+  await getTotalPrice(totalPrice - price * quantity);
+  setItem(cart);
+}
+
+function getTotalQuantity(qty) {
+  totalQuantity = qty;
+  return (totalQuantityHTML.textContent = totalQuantity);
+}
+
+function getTotalPrice(price) {
+  totalPrice = price;
+  return (totalPriceHTML.textContent = Intl.NumberFormat("fr-FR").format(totalPrice));
+}
+
+async function displayCart() {
   for (const product of Object.entries(cart)) {
     for (const element of Object.values(product[1])) {
-      totalQuantity += element.quantity;
+      getTotalQuantity((totalQuantity += element.quantity));
 
       await fetchProducts(product[0]).then(async (data) => {
-        totalPrice += data.price * element.quantity;
-        // console.log(data.price, element.quantity, data.price * element.quantity);
-        console.log("total price : ", totalPrice);
-
+        getTotalPrice((totalPrice += data.price * element.quantity));
         let productProperties = {
           id: data._id,
           name: data.name,
@@ -27,9 +56,9 @@ if (cart) {
           alt: data.altTxt,
           price: data.price,
           description: data.description,
+          color: element.color,
+          quantity: element.quantity,
         };
-
-        let cartItems = document.getElementById("cart__items");
 
         let product = {
           article: document.createElement("article"),
@@ -48,10 +77,9 @@ if (cart) {
           delete: document.createElement("p"),
         };
 
-        // console.log(productProperties);
-
         product.article.className = "cart__item";
         product.article.dataset.id = productProperties.id;
+        product.article.dataset.color = productProperties.color;
         cartItems.appendChild(product.article);
 
         product.divImage.className = "cart__item__img";
@@ -70,7 +98,7 @@ if (cart) {
         product.title.textContent = productProperties.name;
         product.contentDescription.appendChild(product.title);
 
-        product.color.textContent = element.color;
+        product.color.textContent = productProperties.color;
         product.contentDescription.appendChild(product.color);
 
         product.price.textContent = `${productProperties.price} €`;
@@ -90,8 +118,13 @@ if (cart) {
         product.quantityInput.name = "itemQuantity";
         product.quantityInput.min = "1";
         product.quantityInput.max = "100";
-        product.quantityInput.value = element.quantity;
+        product.quantityInput.value = productProperties.quantity;
         product.settingsQuantity.appendChild(product.quantityInput);
+        product.settingsQuantity.addEventListener("change", (event) => {
+          event.preventDefault();
+
+          editItem(productProperties.quantity);
+        });
 
         product.settingsDelete.className = "cart__item__content__settings__delete";
         product.contentSettings.appendChild(product.settingsDelete);
@@ -99,10 +132,20 @@ if (cart) {
         product.delete.className = "deleteItem";
         product.delete.textContent = "Supprimer";
         product.settingsDelete.appendChild(product.delete);
+        product.settingsDelete.addEventListener("click", (event) => {
+          event.preventDefault();
+          deleteItem(
+            productProperties.id,
+            productProperties.color,
+            productProperties.quantity,
+            productProperties.price
+          );
+        });
       });
     }
-
-    totalQuantityHTML.textContent = totalQuantity;
-    totalPriceHTML.textContent = Intl.NumberFormat("fr-FR").format(totalPrice);
   }
+}
+
+if (cart) {
+  displayCart();
 }
