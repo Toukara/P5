@@ -5,12 +5,30 @@ let totalQuantity = 0;
 let totalPrice = 0;
 
 let totalQuantityHTML = document.getElementById("totalQuantity");
+totalQuantityHTML.textContent = totalQuantity;
 let totalPriceHTML = document.getElementById("totalPrice");
+totalPriceHTML.textContent = totalPrice;
 let cartItems = document.getElementById("cart__items");
 
 console.log();
 
-function editItem(defaultQty) {}
+function editItem(id, oldQty, newQty, color, price) {
+  // console.log(newQty, oldQty);
+  if (oldQty == newQty) {
+    return;
+  } else {
+    let colorIndex = cart[id].findIndex((item) => item.color === color);
+    // console.log(cart[id][colorIndex].quantity);
+    cart[id][colorIndex].quantity = newQty;
+    // console.log(cart[id][colorIndex].quantity);
+  }
+  console.log(Math.abs(oldQty - newQty));
+  newQty > oldQty
+    ? getTotalQuantity(totalQuantity + newQty) && getTotalPrice(totalPrice + price * newQty)
+    : getTotalQuantity(totalQuantity - newQty) && getTotalPrice(totalPrice - price * newQty);
+
+  setItem(cart);
+}
 
 async function deleteItem(id, color, quantity, price) {
   let productArticle = document.querySelector(`[data-id="${id}"]` && `[data-color="${color}"]`);
@@ -33,11 +51,11 @@ async function deleteItem(id, color, quantity, price) {
 }
 
 function getTotalQuantity(qty) {
-  totalQuantity = qty;
+  totalQuantity = parseInt(qty);
   return (totalQuantityHTML.textContent = totalQuantity);
 }
 
-function getTotalPrice(price) {
+function getTotalPrice(price = 0) {
   totalPrice = price;
   return (totalPriceHTML.textContent = Intl.NumberFormat("fr-FR").format(totalPrice));
 }
@@ -101,7 +119,7 @@ async function displayCart() {
         product.color.textContent = productProperties.color;
         product.contentDescription.appendChild(product.color);
 
-        product.price.textContent = `${productProperties.price} €`;
+        product.price.textContent = `${Intl.NumberFormat("fr-FR").format(productProperties.price)} €`;
         product.contentDescription.appendChild(product.price);
 
         product.contentSettings.className = "cart__item__content__settings";
@@ -123,7 +141,13 @@ async function displayCart() {
         product.settingsQuantity.addEventListener("change", (event) => {
           event.preventDefault();
 
-          editItem(productProperties.quantity);
+          editItem(
+            productProperties.id,
+            parseInt(productProperties.quantity),
+            parseInt(product.quantityInput.value),
+            productProperties.color,
+            productProperties.price
+          );
         });
 
         product.settingsDelete.className = "cart__item__content__settings__delete";
