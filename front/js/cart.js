@@ -1,4 +1,4 @@
-import { fetchProducts, getCart, store } from "./utilities.js";
+import { fetchProducts, postOrder, store } from "./utilities.js";
 
 let [cart, { setItem }] = store("panier");
 let totalQuantity = 0;
@@ -245,8 +245,8 @@ if (cart) {
     let contact = {
       firstName: input.firstName.value,
       lastName: input.lastName.value,
-      city: input.city.value,
       address: input.address.value,
+      city: input.city.value,
       email: input.email.value,
     };
 
@@ -259,11 +259,20 @@ if (cart) {
     ) {
       alert("Veuillez remplir tous les champs");
     } else {
-      let order = {
+      let productArray = [];
+
+      for (let id in cart) {
+        productArray.push(id)
+      }
+
+      let data = {
         contact: contact,
-        products : Object.entries(cart)
+        products: productArray,
       };
-      console.log("order :" , JSON.stringify(order, null , 2));
+
+      postOrder(data);
+
+      console.log("Order sent");
     }
   });
 } else {
