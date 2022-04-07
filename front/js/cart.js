@@ -30,10 +30,8 @@ async function deleteItem(id, color) {
   if (cart[id].length >= 2) {
     let productIndex = cart[id].findIndex((x) => x.color === color);
     cart[id].splice(productIndex, 1);
-    console.log("Couleur retiré");
   } else {
     delete cart[id];
-    console.log("Produit retiré");
   }
   (await getTotalQuantity()) && (await getTotalPrice());
   setItem(cart);
@@ -262,7 +260,7 @@ if (cart) {
       let productArray = [];
 
       for (let id in cart) {
-        productArray.push(id)
+        productArray.push(id);
       }
 
       let data = {
@@ -271,10 +269,6 @@ if (cart) {
       };
 
       postOrder(data);
-
-      console.log("Order sent");
     }
   });
-} else {
-  console.log("cart is empty");
 }

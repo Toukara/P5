@@ -52,6 +52,5 @@ fetchProducts(url.searchParams.get("id")).then(async (data) => {
     }
 
     setItem(cart);
-    console.log(cart);
   });
 });
