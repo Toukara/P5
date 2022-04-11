@@ -3,6 +3,10 @@ import { fetchProducts, store } from "./utilities.js";
 var url = new URL(window.location.href); //get l'url du site.
 
 fetchProducts(url.searchParams.get("id")).then(async (data) => {
+  if (!Object.keys(data).length) {
+    return false;
+  }
+
   let article = {
     image: document.createElement("img"),
     name: document.getElementById("title"),
@@ -38,7 +42,7 @@ fetchProducts(url.searchParams.get("id")).then(async (data) => {
     let color = document.getElementById("colors").value;
     let quantity = parseInt(document.getElementById("quantity").value);
 
-    if (quantity < 1 || !color) {
+    if (quantity < 1 || !color || isNaN(quantity)) {
       return alert("Veuillez vérifier la quantité et/ou la couleur sélectionnée");
     }
 

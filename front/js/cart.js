@@ -136,7 +136,7 @@ async function displayCart() {
         product.quantityInput.max = "100";
         product.quantityInput.value = productProperties.quantity;
         product.settingsQuantity.appendChild(product.quantityInput);
-        product.settingsQuantity.addEventListener("change", (event) => {
+        product.settingsQuantity.addEventListener("change", () => {
           editItem(
             productProperties.id,
             parseInt(productProperties.quantity),
@@ -151,7 +151,7 @@ async function displayCart() {
         product.delete.className = "deleteItem";
         product.delete.textContent = "Supprimer";
         product.settingsDelete.appendChild(product.delete);
-        product.settingsDelete.addEventListener("click", (event) => {
+        product.settingsDelete.addEventListener("click", () => {
           deleteItem(productProperties.id, productProperties.color);
         });
       });
